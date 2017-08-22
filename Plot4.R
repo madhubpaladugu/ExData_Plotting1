@@ -1,0 +1,22 @@
+setwd("F:/Work/Coursera/EDA/week1")
+##Memory calculation
+round(2075259*9*8/2^{20}/1024,2)
+##0.14 GB of memory required to read the raw data file into R
+data <- read.table("household_power_consumption.txt",header = T,sep=";",stringsAsFactors = FALSE)
+data$datetime <- strptime(paste(data$Date,data$Time,sep=" "),format='%d/%m/%Y %H:%M:%S')
+data$Date <- as.Date(as.character(data$Date),format='%d/%m/%Y')
+data_sub <- subset(data,Date>="2007-02-01" & Date <= "2007-02-02")
+data_sub$Global_active_power <- as.numeric(data_sub$Global_active_power)
+
+data_sub$Voltage <- as.numeric(data_sub$Voltage)
+data_sub$Global_reactive_power <- as.numeric(data_sub$Global_reactive_power)
+png("plot4.png", width=480, height=480)
+par(mfrow=c(2,2))
+with(data_sub,plot(datetime,Global_active_power,type='l',xlab="",ylab="Global Active Power (kilowatts)"))
+with(data_sub,plot(datetime,Voltage,type='l'))
+with(data_sub,plot(datetime,Sub_metering_1,type='l',xlab="",ylab="Energy sub metering"))
+lines(data_sub$datetime,data_sub$Sub_metering_2,type='l',col='red')
+lines(data_sub$datetime,data_sub$Sub_metering_3,type='l',col='blue')
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=, lwd=2.5, col=c("black", "red", "blue"), bty="o")
+with(data_sub,plot(datetime,Global_reactive_power,type='l',xlab="",ylab="Global_reactive_power"))
+dev.off()
